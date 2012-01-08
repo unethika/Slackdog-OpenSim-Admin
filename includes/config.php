@@ -174,6 +174,17 @@ define("C_AUTH_TBL","devopensim.auth");
 define("C_AGENTS_TBL","devopensim.GridUser");
 define("C_REGIONS_TBL","devopensim.regions");
 define("C_APPEARANCE_TBL", "devopensim.Avatars");
+define("C_INVFOLDERS_TBL", "devopensim.inventoryfolders");
+define("C_FRIENDS_TBL", "devopensim.Friends");
+define("C_TOKENS_TBL", "devopensim.tokens");
+define("C_PRESENCE_TBL", "devopensim.Presence");
+define("C_ESTMAN_TBL", "devopensim.estate_managers");
+define("C_ESTUSER_TBL", "devopensim.estate_users");
+define("C_ESTBAN_TBL", "devopensim.estateban");
+define("C_INVITEMS_TBL", "devopensim.inventoryitems");
+define("C_LANDACCLIST_TBL", "devopensim.landaccesslist");
+define("C_REGIONBAN_TBL", "devopensim.regionban");
+
 
 //GROUPS DEFAULT TABLES (NEEDED FOR THE GROUP PARTS)
 //  The module can be configured to use it's own db, or devopensim.s.  

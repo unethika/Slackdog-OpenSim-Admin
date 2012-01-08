@@ -39,10 +39,23 @@ $Limit = "LIMIT $AStart, $ALimit";
 //DELETE USER START
 if(($_GET[action2] == 'delete') and ($_GET[quest] == 'yes')) {
 	$DbLink3 = new DB;
-	$DbLink3->query("Delete FROM ".C_USERS_TBL." WHERE UUID='$_GET[user_id]'");
+	$DbLink3->query("Delete FROM ".C_USERS_TBL." WHERE PrincipalID='$_GET[user_id]'");
+	$DbLink3->query("Delete FROM ".C_AUTH_TBL." WHERE UUID='$_GET[user_id]'");
 	$DbLink3->query("Delete FROM ".C_WIUSR_TBL." WHERE UUID='$_GET[user_id]'");
 	$DbLink3->query("Delete FROM ".C_CODES_TBL." WHERE UUID='$_GET[user_id]'");
-	$DbLink3->query("Delete FROM ".C_TRANSACTION_TBL." WHERE (sourceId='$_GET[user_id]' or destId='$_GET[user_id]')");
+	//$DbLink3->query("Delete FROM ".C_TRANSACTION_TBL." WHERE (sourceId='$_GET[user_id]' or destId='$_GET[user_id]')");
+	$DbLink3->query("DELETE FROM ".C_APPEARANCE_TBL." WHERE PrincipalID='$_GET[user_id]'");
+	$DbLink3->query("DELETE FROM ".C_FRIENDS_TBL." WHERE PrincipalID='$_GET[user_id]'");
+	$DbLink3->query("DELETE FROM ".C_TOKENS_TBL." WHERE UUID='$_GET[user_id]'");
+	$DbLink3->query("DELETE FROM ".C_PRESENCE_TBL." WHERE UserID='$_GET[user_id]'");
+	$DbLink3->query("DELETE FROM ".C_AGENTS_TBL." WHERE UserID='$_GET[user_id]'");
+	$DbLink3->query("DELETE FROM ".C_ESTMAN_TBL." WHERE uuid='$_GET[user_id]'");
+	$DbLink3->query("DELETE FROM ".C_ESTUSER_TBL." WHERE uuid='$_GET[user_id]'");
+	$DbLink3->query("DELETE FROM ".C_ESTBAN_TBL." WHERE bannedUUID='$_GET[user_id]'");
+	$DbLink3->query("DELETE FROM ".C_INVFOLDERS_TBL." WHERE agentID='$_GET[user_id]'");
+	$DbLink3->query("DELETE FROM ".C_INVITEMS_TBL."	WHERE avatarID='$_GET[user_id]'");
+	$DbLink3->query("DELETE FROM ".C_LANDACCLIST_TBL." WHERE AccessUUID='$_GET[user_id]'");
+	$DbLink3->query("DELETE FROM ".C_REGIONBAN_TBL." WHERE bannedUUID='$_GET[user_id]'");
 }
 //DELETE USER END
 
@@ -53,7 +66,7 @@ if(($_GET[action2] == 'ban') and ($_GET[quest] == 'yes')) {
 	list($agentIP) = $DbLink3->next_record();
 	
 	$DbLink->query("INSERT INTO ".C_USRBAN_TBL." (UUID,agentIP)	VALUES ('$_GET[user_id]','$agentIP') ");
-	$DbLink3->query("UPDATE ".C_USERS_TBL." SET passwordHash='' WHERE UUID='$_GET[user_id]'");
+	$DbLink3->query("UPDATE ".C_AUTH_TBL." SET passwordHash='' WHERE UUID='$_GET[user_id]'");
 	$DbLink3->query("UPDATE ".C_WIUSR_TBL." SET active='5' WHERE UUID='$_GET[user_id]'");
 }
 //BAN USER END
@@ -63,7 +76,7 @@ if(($_GET[action2] == 'unban') and ($_GET[quest] == 'yes')) {
 	$DbLink3 = new DB;
 	$DbLink3->query("SELECT passwordHash,active FROM ".C_WIUSR_TBL." WHERE UUID='$_GET[user_id]'");
 	list($passbkp,$active) = $DbLink3->next_record();
-	$DbLink3->query("UPDATE ".C_USERS_TBL." SET passwordHash='$passbkp' WHERE UUID='$_GET[user_id]'");
+	$DbLink3->query("UPDATE ".C_AUTH_TBL." SET passwordHash='$passbkp' WHERE UUID='$_GET[user_id]'");
 	$DbLink3->query("UPDATE ".C_WIUSR_TBL." SET active='1' WHERE UUID='$_GET[user_id]'");
 	$DbLink3->query("DELETE FROM ".C_USRBAN_TBL." Where UUID='$_GET[user_id]'");
 	

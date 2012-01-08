@@ -298,7 +298,8 @@ if(($_SESSION[PASSWD] == '')or($_SESSION[EMAIC] == '')or($_SESSION[EMAIL] == '')
 }else{
 if(($_SESSION[ERROR] == '') and ($_SESSION[ACTION] == 'THX')) {
 	$passneu = $_SESSION[PASSWD];
-	$passwordHash = md5(md5($passneu) . ":" );
+	$passwordSalt = sprintf('%04x%04x%04x%04x%04x%04x%04x%04x',mt_rand(0,0xffff),mt_rand(0,0xffff),mt_rand(0,0xffff),mt_rand(0,0xffff),mt_rand(0,0xffff),mt_rand(0,0xffff),mt_rand(0,0xffff),mt_rand(0,0xffff));
+	$passwordHash = md5(md5($passneu).":".$passwordSalt);
 
 	$DbLink->query("SELECT FirstName FROM ".C_USERS_TBL." where FirstName='$_SESSION[ACCFIRST]' and LastName='$_SESSION[ACCLAST]' ");
 	list($USERCHECK) = $DbLink->next_record();
@@ -317,26 +318,63 @@ window.location.href='index.php?page=createacc';
 	
 	}else{
 	
-	
+	function  make_random_guid()
+{
+	$guid = sprintf( '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+				mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ),
+        			mt_rand( 0, 0x0fff ) | 0x4000,
+        			mt_rand( 0, 0x3fff ) | 0x8000,   
+           			mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ) );
+	return $guid;
+}
 
 	
 	$image= sprintf( '%04x%04x-%04x-%04x-%04x-%04x%04x%04x', 0, 0, 0, 0, 0, 0, 0, 0 );
-	$UUID = sprintf( '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-			mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ),
-			mt_rand( 0, 0x0fff ) | 0x4000,
-			mt_rand( 0, 0x3fff ) | 0x8000,
-			mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ) );
-	 
-	$DbLink->query("INSERT INTO ".C_USERS_TBL." 
-	(UUID,username,lastname,passwordHash,passwordSalt,homeRegion,homeLocationX,homeLocationY,homeLocationZ,homeLookAtX,homeLookAtY,homeLookAtZ,created,lastLogin,userInventoryURI,userAssetURI,profileCanDoMask,profileWantDoMask,profileAboutText,profileFirstText,profileImage,profileFirstImage)
-	VALUES
-	('$UUID','$_SESSION[ACCFIRST]','$_SESSION[ACCLAST]','$passwordHash','$passwordSalt','$_SESSION[REGION]','128','128','128','100','100','100',".time().",'0','$userInventoryURI','$userAssetURI','0','0','','','$image','$image')  ");
-	
-	$DbLink->query("INSERT INTO ".C_WIUSR_TBL." 
-	(UUID,username,lastname,passwordHash,passwordSalt,realname1,realname2,adress1,zip1,city1,country1,emailadress)
-	VALUES
-	('$UUID','$_SESSION[ACCFIRST]','$_SESSION[ACCLAST]','$passwordHash','$passwordSalt','$_SESSION[NAMEF]','$_SESSION[NAMEL]','$_SESSION[ADRESS]','$_SESSION[ZIP]','$_SESSION[CITY]','$_SESSION[COUNTRY]','$_SESSION[EMAIL]')  ");
-	
+	$UUID = make_random_guid();
+	$my_inventory = make_random_guid();
+	$serviceURLs = 'HomeURI= GatekeeperURI= InventoryServerURI= AssetServerURI='; 
+	$nulluuid   = '00000000-0000-0000-0000-000000000000';
+
+  $DbLink->query("INSERT INTO ".C_USERS_TBL." (PrincipalID,ScopeID,FirstName,LastName,Email,ServiceURLs,Created,UserLevel,UserFlags,UserTitle) VALUES ('$UUID','$nulluuid','".$_SESSION['ACCFIRST']."','".$_SESSION['ACCLAST']."','','$serviceURLs','".time()."','0','0','')");
+
+  $DbLink->query("INSERT INTO ".C_AGENTS_TBL." (UserID,HomeRegionID,HomePosition,HomeLookAt,LastRegionID,LastPosition,LastLookAt,Online,Login,Logout) VALUES ('$UUID','".$_SESSION['REGIONID']."','<128,128,0>','<0,0,0>','".$_SESSION['REGIONID']."','<128,128,0>','<0,0,0>','false','0','0')");
+
+  $DbLink->query("INSERT INTO ".C_AUTH_TBL." (UUID,passwordHash,passwordSalt,webLoginKey,accountType) VALUES ('$UUID','$passwordHash','$passwordSalt','$nulluuid','UserAccount')");
+
+  $DbLink->query("INSERT INTO ".C_INVFOLDERS_TBL." (folderName,type,version,folderID,agentID,parentFolderID) VALUES ('My Inventory','9','1','$my_inventory','$UUID','$nulluuid')");
+
+  $DbLink->query("INSERT INTO ".C_INVFOLDERS_TBL." (folderName,type,version,folderID,agentID,parentFolderID) VALUES ('Textures','0','1','".make_random_guid()."','$UUID','$my_inventory')");
+
+  $DbLink->query("INSERT INTO ".C_INVFOLDERS_TBL." (folderName,type,version,folderID,agentID,parentFolderID) VALUES ('Sounds','1','1','".make_random_guid()."','$UUID','$my_inventory')");
+
+  $DbLink->query("INSERT INTO ".C_INVFOLDERS_TBL." (folderName,type,version,folderID,agentID,parentFolderID) VALUES ('Calling Cards','2','1','".make_random_guid()."','$UUID','$my_inventory')");
+
+  $DbLink->query("INSERT INTO ".C_INVFOLDERS_TBL." (folderName,type,version,folderID,agentID,parentFolderID) VALUES ('Landmarks','3','1','".make_random_guid()."','$UUID','$my_inventory')");
+
+  $DbLink->query("INSERT INTO ".C_INVFOLDERS_TBL." (folderName,type,version,folderID,agentID,parentFolderID) VALUES ('Clothing','5','1','".make_random_guid()."','$UUID','$my_inventory')");
+
+  $DbLink->query("INSERT INTO ".C_INVFOLDERS_TBL." (folderName,type,version,folderID,agentID,parentFolderID) VALUES ('Objects','6','1','".make_random_guid()."','$UUID','$my_inventory')");
+
+  $DbLink->query("INSERT INTO ".C_INVFOLDERS_TBL." (folderName,type,version,folderID,agentID,parentFolderID) VALUES ('Notecards','7','1','".make_random_guid()."','$UUID','$my_inventory')");
+
+  $DbLink->query("INSERT INTO ".C_INVFOLDERS_TBL." (folderName,type,version,folderID,agentID,parentFolderID) VALUES ('Scripts','10','1','".make_random_guid()."','$UUID','$my_inventory')");
+
+  $DbLink->query("INSERT INTO ".C_INVFOLDERS_TBL." (folderName,type,version,folderID,agentID,parentFolderID) VALUES ('Body Parts','13','1','".make_random_guid()."','$UUID','$my_inventory')");
+
+  $DbLink->query("INSERT INTO ".C_INVFOLDERS_TBL." (folderName,type,version,folderID,agentID,parentFolderID) VALUES ('Trash','14','1','".make_random_guid()."','$UUID','$my_inventory')");
+
+  $DbLink->query("INSERT INTO ".C_INVFOLDERS_TBL." (folderName,type,version,folderID,agentID,parentFolderID) VALUES ('Photo Album','15','1','".make_random_guid()."','$UUID','$my_inventory')");
+
+  $DbLink->query("INSERT INTO ".C_INVFOLDERS_TBL." (folderName,type,version,folderID,agentID,parentFolderID) VALUES ('Lost And Found','16','1','".make_random_guid()."','$UUID','$my_inventory')");
+
+  $DbLink->query("INSERT INTO ".C_INVFOLDERS_TBL." (folderName,type,version,folderID,agentID,parentFolderID) VALUES ('Animations','20','1','".make_random_guid()."','$UUID','$my_inventory')");
+
+  $DbLink->query("INSERT INTO ".C_INVFOLDERS_TBL." (folderName,type,version,folderID,agentID,parentFolderID) VALUES ('Gestures','21','1','".make_random_guid()."','$UUID','$my_inventory')");
+
+  $DbLink->query("INSERT INTO ".C_WIUSR_TBL."  	(UUID,username,lastname,passwordHash,passwordSalt,realname1,realname2,adress1,zip1,city1,country1,emailadress,active)
+  VALUES
+('$UUID','".$_SESSION['ACCFIRST']."','".$_SESSION['ACCLAST']."','$passwordHash','$passwordSalt','".$_SESSION['NAMEF']."','".$_SESSION['NAMEL']."','".$_SESSION['ADRESS']."','".$_SESSION['ZIP']."','".$_SESSION['CITY']."','".$_SESSION['COUNTRY']."','".$_SESSION['EMAIL']."','1')  ");
+
 
 //-----------------------------------MAIL--------------------------------------
 	 $date_arr = getdate();

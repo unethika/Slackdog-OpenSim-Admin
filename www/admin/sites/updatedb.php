@@ -13,8 +13,8 @@ if($_SESSION[ADMINUID] == $ADMINCHECK){
 $DbLink = new DB;
 
 if($_POST[Submit]=="Update"){
-$DbLink->query("SELECT UUID,username,lastname,passwordHash FROM ".C_USERS_TBL." ");
-while(list($UUID,$username,$lastname,$password) = $DbLink->next_record()){
+$DbLink->query("SELECT ".C_USERS_TBL.".PrincipalID,".C_USERS_TBL.".FirstName,".C_USERS_TBL.".LastName,".C_AUTH_TBL.".passwordHash,".C_AUTH_TBL.".passwordSalt FROM ".C_USERS_TBL.", ".C_AUTH_TBL." WHERE ".C_USERS_TBL.".PrincipalID = ".C_AUTH_TBL.".UUID ");
+while(list($UUID,$username,$lastname,$passwordHash,$passwordSalt) = $DbLink->next_record()){
 
 $DbLink2 = new DB;
 $DbLink2->query("SELECT username FROM ".C_WIUSR_TBL." where UUID='$UUID'");
@@ -23,7 +23,7 @@ list($USRNM) = $DbLink2->next_record();
 if($USRNM){
 }else{
 
-$DbLink2->query("INSERT INTO ".C_WIUSR_TBL." (UUID,username,lastname,passwordHash,active) VALUES ('$UUID','$username','$lastname','$password','1')");
+$DbLink2->query("INSERT INTO ".C_WIUSR_TBL." (UUID,username,lastname,passwordHash,passwordSalt,active) VALUES ('$UUID','$username','$lastname','$passwordHash','$passwordSalt','1')");
 
 $DbLink2->query("SELECT count(*) FROM ".C_USERS_TBL."");
 list($CUSR) = $DbLink2->next_record();
