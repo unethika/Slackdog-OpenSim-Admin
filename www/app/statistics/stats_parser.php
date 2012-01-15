@@ -1,6 +1,6 @@
 <?
-include("../../settings/config.php");
-include("../../settings/mysql.php");
+include("../../../includes/config.php");
+include("../../../includes/mysql.php");
 
 $DbLink = new DB;
 

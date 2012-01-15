@@ -1,6 +1,6 @@
 <?
-include("../../settings/config.php");
-include("../../settings/mysql.php");
+include("../../../includes/config.php");
+include("../../../includes/mysql.php");
 
 $DbLink = new DB;
 
@@ -101,7 +101,7 @@ function parse($host,$port, $texture)
 
 	list($regionX,$regionY ) = $DbLink->next_record();
 
-	$fp = fopen("maptiles\mapimage-".$regionX."-".$regionY.".jpg", "w");
+	$fp = fopen("maptiles/mapimage-".$regionX."-".$regionY.".jpg", "w");
 	fwrite($fp, $mapdata);
 	fclose($fp);
 }

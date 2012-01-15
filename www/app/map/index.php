@@ -1,6 +1,6 @@
 <?
-include("../../settings/config.php");
-include("../../settings/mysql.php");
+include("../../../includes/config.php");
+include("../../../includes/mysql.php");
 
 if(($_GET[size])and($ALLOW_ZOOM==TRUE)){
 if(($_GET[size] == 64) or ($_GET[size] == 128) or ($_GET[size] == 192) or ($_GET[size] == 256)){
@@ -73,7 +73,7 @@ else if($display_marker=="dr")
 
 
     <?
-	$filename = "maptiles/mapimage-".$locX."-".$locY.".jpg";
+	$filename = "maptiles/mapimage-".round($locX)."-".round($locY).".jpg";
 	if (file_exists($filename)) 
 	{
 	echo 'var tmp_region_image = new Img("'.$filename.'",'.$size.','.$size.');';

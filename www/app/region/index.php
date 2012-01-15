@@ -16,8 +16,8 @@
 -->
 </style>
 <? 
-include("../../settings/config.php");
-include("../../settings/mysql.php");
+include("../../../includes/config.php");
+include("../../../includes/mysql.php");
 
 $DbLink = new DB;
 $query = "SELECT uuid,regionName,serverIP,serverHttpPort,locX,locY,owner_uuid FROM ".C_REGIONS_TBL." where locX='".$_GET[x]."' and locY='".$_GET[y]."'";

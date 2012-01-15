@@ -17,7 +17,7 @@
     include("phpxmlrpclib/xmlrpc.inc");
     include("phpxmlrpclib/xmlrpcs.inc");
 
-    include("config.php");
+    include("../../includes/groups/config.php");
 	
 
     $groupPowers = array(

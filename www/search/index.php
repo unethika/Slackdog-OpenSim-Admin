@@ -12,7 +12,7 @@
 </form>
 
 <?php
-
+include("../../includes/search/databaseinfo.php");
   // Get the search variable from URL
 
   $var = $_GET['q'] ;
@@ -36,8 +36,9 @@ if (!isset($var))
   exit;
   }
 
-//connect to your database ** EDIT REQUIRED HERE **
-mysql_connect("localhost","wiredux","*****"); //(host, username, password)
+//connect to your database ** EDIT MAY BE REQUIRED HERE **
+
+mysql_connect($DB_HOST,$DB_USER,$DB_PASSWORD); //(host, username, password)
 
 //specify database ** EDIT REQUIRED HERE **
 mysql_select_db("ossearch") or die("Unable to select database"); //select which database we're using

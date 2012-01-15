@@ -30,8 +30,8 @@
 // Modified by Fumi.Iseki for CMS/LMS '09 5/31
 //
 
-require_once('../include/env_interface.php');
-require_once('./helpers.php');
+require_once('../../includes/env_interface.php');
+require_once('helpers.php');
 
 
 
