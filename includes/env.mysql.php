@@ -28,8 +28,8 @@
 // Load Function
 //
 
-require_once(ENV_HELPER_PATH.'/../include/tools.func.php');
-require_once(ENV_HELPER_PATH.'/../include/mysql.func.php');
+require_once(ENV_HELPER_PATH.'/../../includes/tools.func.php');
+require_once(ENV_HELPER_PATH.'/../../includes/mysql.func.php');
 
 
 
