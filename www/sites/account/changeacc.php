@@ -36,15 +36,21 @@ $DbLink->query("UPDATE ".C_USERS_TBL." SET homeRegion='$homeid' WHERE UUID='$_SE
 
 if($_POST[Submit2]=="Save"){
 if($_POST[passnew]==$_POST[passvalid]){
-$password = md5(md5($_POST[passnew]) . ":" );
-$passwold = md5(md5($_POST[passold]) . ":" );
 
-$DbLink->query("SELECT passwordHash FROM ".C_USERS_TBL." WHERE UUID='$_SESSION[USERID]'");
+$passwordSalt = sprintf('%04x%04x%04x%04x%04x%04x%04x%04x',mt_rand(0,0xffff),mt_rand(0,0xffff),mt_rand(0,0xffff),mt_rand(0,0xffff),mt_rand(0,0xffff),mt_rand(0,0xffff),mt_rand(0,0xffff),mt_rand(0,0xffff));
+
+$DbLink->query("SELECT passwordSalt FROM ".C_AUTH_TBL." WHERE UUID='$_SESSION[USERID]'");
+list($pwslt) = $DbLink->next_record();
+
+$password = md5(md5($_POST[passnew]).":".$passwordSalt);
+$passwold = md5(md5($_POST[passold]).":".$pwslt);
+
+$DbLink->query("SELECT passwordHash FROM ".C_AUTH_TBL." WHERE UUID='$_SESSION[USERID]'");
 list($pwss) = $DbLink->next_record();
 
 if($pwss==$passwold){
-$DbLink->query("UPDATE ".C_USERS_TBL." SET passwordHash='$password' WHERE UUID='$_SESSION[USERID]' ");
-$DbLink->query("UPDATE ".C_WIUSR_TBL." SET passwordHash='$password' WHERE UUID='$_SESSION[USERID]' ");
+$DbLink->query("UPDATE ".C_AUTH_TBL." SET passwordHash='$password',passwordSalt='$passwordSalt' WHERE UUID='$_SESSION[USERID]' ");
+$DbLink->query("UPDATE ".C_WIUSR_TBL." SET passwordHash='$password',passwordSalt='$passwordSalt' WHERE UUID='$_SESSION[USERID]' ");
 
 session_unset();
 session_destroy();
